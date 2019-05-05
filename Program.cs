@@ -11,8 +11,6 @@ namespace cinema_scrape
 
             var service = new MovieService(db, scraper);
 
-            // service.RefreshData();
-
             var movies = service.GetMovies();
 
             foreach (var movie in movies)

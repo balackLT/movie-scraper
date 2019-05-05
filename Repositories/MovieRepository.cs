@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using LiteDB;
 
 namespace cinema_scrape
@@ -31,6 +33,17 @@ namespace cinema_scrape
                 var movies = movieCollection.FindAll();
 
                 return movies;
+            }
+        }
+
+        public DateTime GetLastUpdatedDate()
+        {
+            using (var db = new LiteDatabase(dbPath))
+            {
+                var movieCollection = db.GetCollection<Movie>(MovieCollectionName);
+                var lastUpdate = movieCollection.FindAll().Max(m => m.Updated);
+
+                return lastUpdate;
             }
         }
 

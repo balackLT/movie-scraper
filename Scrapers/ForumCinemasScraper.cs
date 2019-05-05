@@ -16,7 +16,7 @@ namespace cinema_scrape
             var website = new HtmlWeb();
             var content = website.Load(_baseUrl);
 
-            var moviesBlock = content.DocumentNode.QuerySelectorAll("div.result>table").ToList();
+            var moviesBlock = content.DocumentNode.QuerySelectorAll(".result>table").ToList();
 
             var movieList = new List<Movie>();
 
@@ -35,7 +35,8 @@ namespace cinema_scrape
                 {
                     Title = titleData.Title,
                     Dubbed = titleData.Dubbed,
-                    InCinemaFrom = ParseDate(fromData)
+                    InCinemaFrom = ParseDate(fromData),
+                    ShownIn = Cinema.ForumCinemas
                 };
 
                 movieList.Add(movie);
