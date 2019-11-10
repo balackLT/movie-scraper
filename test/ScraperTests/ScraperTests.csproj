@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/CinemaScraper/CinemaScraper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="./TestData/ForumCinemasTestData.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

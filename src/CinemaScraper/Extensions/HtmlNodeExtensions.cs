@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 
-namespace cinema_scrape
+namespace CinemaScraper
 {
     public static class HtmlNodeExtensions
     {

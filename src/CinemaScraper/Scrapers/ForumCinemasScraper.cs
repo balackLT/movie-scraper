@@ -4,17 +4,32 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
-namespace cinema_scrape
+namespace CinemaScraper
 {
-    public class ForumCinemasScraper
+    public interface IMovieScraper
     {
-        string _baseUrl = "http://www.forumcinemas.lt/Movies/NowInTheatres/";
+        List<Movie> GetCurrentMovies();
+        List<Movie> ParseMoviesFromHtmlDoc(HtmlDocument content);
+    }
+
+    public class ForumCinemasScraper : IMovieScraper
+    {
+        public readonly string BaseUrl;
+
+        public ForumCinemasScraper(string baseUrl)
+        {
+            BaseUrl = baseUrl;
+        }
 
         public List<Movie> GetCurrentMovies()
         {
-            var website = new HtmlWeb();
-            var content = website.Load(_baseUrl);
+            var content = LoadHtmlFromWebsite(BaseUrl);
 
+            return ParseMoviesFromHtmlDoc(content);
+        }
+
+        public List<Movie> ParseMoviesFromHtmlDoc(HtmlDocument content)
+        {
             var moviesBlock = content.DocumentNode.QuerySelectorAll(".result>table").ToList();
 
             var movieList = new List<Movie>();
@@ -45,7 +60,15 @@ namespace cinema_scrape
             return movieList;
         }
 
-        public (string Title, bool Dubbed) ParseTitle(string title)
+        public HtmlDocument LoadHtmlFromWebsite(string url)
+        {
+            var website = new HtmlWeb();
+            var content = website.Load(url);
+
+            return content;
+        }
+
+        private (string Title, bool Dubbed) ParseTitle(string title)
         {
             bool isDubbed = false;
             string cleanTitle = title;
@@ -63,7 +86,7 @@ namespace cinema_scrape
             return (cleanTitle, isDubbed);
         }
 
-        public DateTime ParseDate(string original)
+        private DateTime ParseDate(string original)
         {
             var cleanString = original
                 .Replace("Kino teatruose nuo: ", "")

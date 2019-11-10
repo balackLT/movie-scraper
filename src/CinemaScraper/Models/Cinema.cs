@@ -1,4 +1,4 @@
-namespace cinema_scrape
+namespace CinemaScraper
 {
     public enum Cinema
     {

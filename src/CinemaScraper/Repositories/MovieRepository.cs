@@ -3,31 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using LiteDB;
 
-namespace cinema_scrape
+namespace CinemaScraper
 {
     public interface IMovieRepository
     {
         void ClearAll();
         IEnumerable<Movie> GetAll();
-        bool isExpired(DateTime expirationDate);
+        bool isExpired();
         void Store(IEnumerable<Movie> movies);
     }
 
     public class MovieRepository : IMovieRepository
     {
         private const string MovieCollectionName = "movie";
-        private readonly string dbPath;
+        private readonly string DbPath;
+        private readonly TimeSpan ExpirationTimeSpan;
 
-        public MovieRepository(string dbPath)
+        public MovieRepository(string dbPath, int cacheExpirationInDays)
         {
-            this.dbPath = dbPath;
+            DbPath = dbPath;
+            ExpirationTimeSpan = TimeSpan.FromDays(cacheExpirationInDays);
         }
 
-        public bool isExpired(DateTime expirationDate) => GetLastUpdatedDate() < expirationDate;
+        public bool isExpired() => GetLastUpdatedDate() < DateTime.Now + ExpirationTimeSpan;
 
         public void Store(IEnumerable<Movie> movies)
         {
-            using (var db = new LiteDatabase(dbPath))
+            using (var db = new LiteDatabase(DbPath))
             {
                 var movieCollection = db.GetCollection<Movie>(MovieCollectionName);
                 movieCollection.Upsert(movies);
@@ -37,7 +39,7 @@ namespace cinema_scrape
 
         public IEnumerable<Movie> GetAll()
         {
-            using (var db = new LiteDatabase(dbPath))
+            using (var db = new LiteDatabase(DbPath))
             {
                 var movieCollection = db.GetCollection<Movie>(MovieCollectionName);
                 var movies = movieCollection.FindAll();
@@ -48,7 +50,7 @@ namespace cinema_scrape
 
         private DateTime GetLastUpdatedDate()
         {
-            using (var db = new LiteDatabase(dbPath))
+            using (var db = new LiteDatabase(DbPath))
             {
                 var movieCollection = db.GetCollection<Movie>(MovieCollectionName);
                 var lastUpdate = movieCollection.FindAll().Max(m => m.Updated);
@@ -59,7 +61,7 @@ namespace cinema_scrape
 
         public void ClearAll()
         {
-            using (var db = new LiteDatabase(dbPath))
+            using (var db = new LiteDatabase(DbPath))
             {
                 var movieCollection = db.GetCollection<Movie>(MovieCollectionName);
                 var movies = movieCollection.FindAll();

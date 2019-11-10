@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace cinema_scrape
+namespace CinemaScraper
 {
     public class Movie
     {

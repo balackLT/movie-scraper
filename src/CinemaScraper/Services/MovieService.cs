@@ -1,36 +1,40 @@
 using System;
 using System.Collections.Generic;
 
-namespace cinema_scrape
+namespace CinemaScraper
 {
-    public class MovieService
+    public interface IMovieService
     {
-        private readonly MovieRepository _movieRepository;
-        private readonly ForumCinemasScraper _fcScraper;
+        IEnumerable<Movie> GetMovies();
+        IEnumerable<Movie> ScrapeCinemaWebsites();
+    }
 
-        private readonly TimeSpan _expirationInterval = TimeSpan.FromDays(1);
+    public class MovieService : IMovieService
+    {
+        private readonly MovieRepository MovieRepository;
+        private readonly ForumCinemasScraper ForumCinemasScraper;
 
         public MovieService(MovieRepository movieRepository, ForumCinemasScraper fcScraper)
         {
-            _movieRepository = movieRepository;
-            _fcScraper = fcScraper;
+            MovieRepository = movieRepository;
+            ForumCinemasScraper = fcScraper;
         }
 
         public IEnumerable<Movie> GetMovies()
         {
-            if (_movieRepository.isExpired(DateTime.Now + _expirationInterval))
+            if (MovieRepository.isExpired())
             {
                 return ScrapeCinemaWebsites();
             }
             else
             {
-                return _movieRepository.GetAll();
+                return MovieRepository.GetAll();
             }
         }
 
         public IEnumerable<Movie> ScrapeCinemaWebsites()
         {
-            var newMovieList = _fcScraper.GetCurrentMovies();
+            var newMovieList = ForumCinemasScraper.GetCurrentMovies();
 
             // TODO: collect from multikino
 
@@ -38,8 +42,8 @@ namespace cinema_scrape
 
             // TODO: update ratings and other external data
 
-            _movieRepository.ClearAll();
-            _movieRepository.Store(newMovieList);
+            MovieRepository.ClearAll();
+            MovieRepository.Store(newMovieList);
 
             return newMovieList;
         }
