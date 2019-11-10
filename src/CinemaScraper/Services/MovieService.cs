@@ -18,7 +18,7 @@ namespace cinema_scrape
 
         public IEnumerable<Movie> GetMovies()
         {
-            if (DateTime.Now - _movieRepository.GetLastUpdatedDate() > _expirationInterval)
+            if (_movieRepository.isExpired(DateTime.Now + _expirationInterval))
             {
                 return ScrapeCinemaWebsites();
             }

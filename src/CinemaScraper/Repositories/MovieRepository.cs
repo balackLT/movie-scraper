@@ -5,7 +5,15 @@ using LiteDB;
 
 namespace cinema_scrape
 {
-    public class MovieRepository
+    public interface IMovieRepository
+    {
+        void ClearAll();
+        IEnumerable<Movie> GetAll();
+        bool isExpired(DateTime expirationDate);
+        void Store(IEnumerable<Movie> movies);
+    }
+
+    public class MovieRepository : IMovieRepository
     {
         private const string MovieCollectionName = "movie";
         private readonly string dbPath;
@@ -14,6 +22,8 @@ namespace cinema_scrape
         {
             this.dbPath = dbPath;
         }
+
+        public bool isExpired(DateTime expirationDate) => GetLastUpdatedDate() < expirationDate;
 
         public void Store(IEnumerable<Movie> movies)
         {
@@ -36,7 +46,7 @@ namespace cinema_scrape
             }
         }
 
-        public DateTime GetLastUpdatedDate()
+        private DateTime GetLastUpdatedDate()
         {
             using (var db = new LiteDatabase(dbPath))
             {

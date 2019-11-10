@@ -2,7 +2,6 @@ using HtmlAgilityPack;
 using Fizzler.Systems.HtmlAgilityPack;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System;
 
 namespace cinema_scrape
