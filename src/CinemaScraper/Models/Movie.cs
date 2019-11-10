@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace CinemaScraper
 {
@@ -13,6 +12,7 @@ namespace CinemaScraper
         public DateTime Updated {get; set;}
 
 
-        public override string ToString() => $"\"{Title}\". From {InCinemaFrom.ToString("yyyy-MM-dd")}. Dubbed = {Dubbed}";
+        public override string ToString() =>
+            $"\"{Title}\". From {InCinemaFrom.ToString("yyyy-MM-dd")}. Dubbed = {Dubbed}. Cinema = {ShownIn}. Updated {Updated}";
     }
 }

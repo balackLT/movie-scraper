@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CinemaScraper
 {
@@ -6,10 +7,17 @@ namespace CinemaScraper
     {
         static void Main(string[] args)
         {
-            var scraper = new ForumCinemasScraper("http://www.forumcinemas.lt/Movies/NowInTheatres/");
             var db = new MovieRepository("movies.db", 1);
 
-            var service = new MovieService(db, scraper);
+            var htmlRepo = new RemoteHtmlRepository("movies.db");
+            var htmlCache = new WebsiteDataCache(htmlRepo, 60);
+
+            var scrapers =  new Dictionary<Cinema, IMovieScraper>
+            {
+                { Cinema.ForumCinemas, new ForumCinemasScraper("http://www.forumcinemas.lt/Movies/NowInTheatres/", htmlCache) }
+            };
+
+            var service = new MovieService(db, scrapers);
 
             var movies = service.GetMovies();
 

@@ -9,23 +9,44 @@ namespace CinemaScraper
     public interface IMovieScraper
     {
         List<Movie> GetCurrentMovies();
+        HtmlDocument LoadHtml();
         List<Movie> ParseMoviesFromHtmlDoc(HtmlDocument content);
     }
 
     public class ForumCinemasScraper : IMovieScraper
     {
+        private const Cinema CinemaType = Cinema.ForumCinemas;
         public readonly string BaseUrl;
+        private readonly IWebsiteDataCache WebsiteCache;
 
-        public ForumCinemasScraper(string baseUrl)
+        public ForumCinemasScraper(string baseUrl, IWebsiteDataCache cache)
         {
             BaseUrl = baseUrl;
+            WebsiteCache = cache;
         }
 
         public List<Movie> GetCurrentMovies()
         {
-            var content = LoadHtmlFromWebsite(BaseUrl);
+            var content = LoadHtml();
 
             return ParseMoviesFromHtmlDoc(content);
+        }
+
+        public HtmlDocument LoadHtml()
+        {
+            HtmlDocument content;
+
+            if (WebsiteCache.IsExpired(CinemaType))
+            {
+                content = LoadHtmlFromWebsite(BaseUrl);
+                WebsiteCache.UpdateData(CinemaType, content);
+            }
+            else
+            {
+                content = WebsiteCache.GetData(CinemaType);
+            }
+
+            return content;
         }
 
         public List<Movie> ParseMoviesFromHtmlDoc(HtmlDocument content)

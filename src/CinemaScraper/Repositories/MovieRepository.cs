@@ -9,7 +9,7 @@ namespace CinemaScraper
     {
         void ClearAll();
         IEnumerable<Movie> GetAll();
-        bool isExpired();
+        bool IsExpired();
         void Store(IEnumerable<Movie> movies);
     }
 
@@ -25,7 +25,7 @@ namespace CinemaScraper
             ExpirationTimeSpan = TimeSpan.FromDays(cacheExpirationInDays);
         }
 
-        public bool isExpired() => GetLastUpdatedDate() < DateTime.Now + ExpirationTimeSpan;
+        public bool IsExpired() => GetLastUpdatedDate() + ExpirationTimeSpan < DateTime.Now;
 
         public void Store(IEnumerable<Movie> movies)
         {

@@ -1,51 +1,44 @@
-using System;
 using System.Collections.Generic;
 
 namespace CinemaScraper
 {
-    public interface IMovieService
-    {
-        IEnumerable<Movie> GetMovies();
-        IEnumerable<Movie> ScrapeCinemaWebsites();
-    }
 
-    public class MovieService : IMovieService
-    {
-        private readonly MovieRepository MovieRepository;
-        private readonly ForumCinemasScraper ForumCinemasScraper;
 
-        public MovieService(MovieRepository movieRepository, ForumCinemasScraper fcScraper)
+    public class MovieService
+    {
+        private readonly IMovieRepository MovieRepository;
+        private readonly Dictionary<Cinema, IMovieScraper> Scrapers;
+
+        public MovieService(IMovieRepository movieRepository, Dictionary<Cinema, IMovieScraper> scrapers)
         {
             MovieRepository = movieRepository;
-            ForumCinemasScraper = fcScraper;
+
+            Scrapers = scrapers;
         }
 
         public IEnumerable<Movie> GetMovies()
         {
-            if (MovieRepository.isExpired())
+            var jointMovieList = new List<Movie>();
+
+            foreach (var cinema in Scrapers.Keys)
             {
-                return ScrapeCinemaWebsites();
+                var movies = GetMoviesFromWeb(cinema);
+                jointMovieList.AddRange(movies);
             }
-            else
-            {
-                return MovieRepository.GetAll();
-            }
-        }
-
-        public IEnumerable<Movie> ScrapeCinemaWebsites()
-        {
-            var newMovieList = ForumCinemasScraper.GetCurrentMovies();
-
-            // TODO: collect from multikino
-
-            // TODO: merge lists
-
-            // TODO: update ratings and other external data
 
             MovieRepository.ClearAll();
-            MovieRepository.Store(newMovieList);
+            MovieRepository.Store(jointMovieList);
 
-            return newMovieList;
+            return jointMovieList;
+        }
+
+        public IEnumerable<Movie> GetMoviesFromWeb(Cinema source)
+        {
+            var scraper = Scrapers[source];
+
+            // TODO: do stuff (log, error?) if scraper not found
+
+            return scraper.GetCurrentMovies();
         }
     }
 }
