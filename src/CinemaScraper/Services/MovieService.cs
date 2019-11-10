@@ -2,8 +2,6 @@ using System.Collections.Generic;
 
 namespace CinemaScraper
 {
-
-
     public class MovieService
     {
         private readonly IMovieRepository MovieRepository;
