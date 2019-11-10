@@ -10,7 +10,7 @@ namespace cinema_scrape
         public bool Dubbed {get; set;}
         public DateTime InCinemaFrom {get; set;}
         public Cinema ShownIn {get; set;}
-        public DateTime Updated {get; private set;} = DateTime.Now;
+        public DateTime Updated {get; set;}
 
 
         public override string ToString() => $"\"{Title}\". From {InCinemaFrom.ToString("yyyy-MM-dd")}. Dubbed = {Dubbed}";

@@ -36,7 +36,8 @@ namespace cinema_scrape
                     Title = titleData.Title,
                     Dubbed = titleData.Dubbed,
                     InCinemaFrom = ParseDate(fromData),
-                    ShownIn = Cinema.ForumCinemas
+                    ShownIn = Cinema.ForumCinemas,
+                    Updated = DateTime.Now
                 };
 
                 movieList.Add(movie);

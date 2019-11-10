@@ -20,15 +20,15 @@ namespace cinema_scrape
         {
             if (DateTime.Now - _movieRepository.GetLastUpdatedDate() > _expirationInterval)
             {
-                RefreshData();
+                return ScrapeCinemaWebsites();
             }
-
-            var movies = _movieRepository.GetAll();
-
-            return movies;
+            else
+            {
+                return _movieRepository.GetAll();
+            }
         }
 
-        public void RefreshData()
+        public IEnumerable<Movie> ScrapeCinemaWebsites()
         {
             var newMovieList = _fcScraper.GetCurrentMovies();
 
@@ -40,6 +40,8 @@ namespace cinema_scrape
 
             _movieRepository.ClearAll();
             _movieRepository.Store(newMovieList);
+
+            return newMovieList;
         }
     }
 }
